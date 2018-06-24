@@ -1,0 +1,77 @@
+---
+title: "IC"
+author: "Beatriz Vianna"
+date: "June 24, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Introdução
+
+## 2. Base de dados
+
+```{r}
+library(kernlab)
+data (spam)
+```
+Spam é um conjunto de dados coletado no Hewlett-Packard Labs, que classifica 4601 e-mails como spam ou nonspam.
+Além desta variável classificatória há 57 variáveis numéricas indicando a frequência de certas palavras e caracteres em cada um destes e-mails.  
+
+Trabalharemos com esse data frame, com 4601 observações de e-mails e 58 variáveis.  
+As primeiras 48 variáveis contêm a frequência do nome da variável no e-mail. Se o nome da variável começa com "num" ela indica a frequência do número correspondente. As variáveis 49-54 indicam a frequência dos caracteres  ‘;’, ‘(’, ‘[’, ‘!’, ‘$’, e ‘#’. As variáveis 55 - 57 contêm a média, a mais longa e e o total de sequências de letras em caixa alta. A variável 58 indica o tipo de e-mail, sendo 2788 classificados como "nonspam" e 1813 classificados como "spam".  
+
+Abaixo as primeiras 5 observações da base:  
+
+```{r mostrabase, echo=FALSE}
+print.data.frame(head(spam, n=5))
+```
+
+Um resumo das variáveis da base:  
+```{r detalhes}
+summary(spam)
+```
+
+Um histograma com a média de distribuição de frequência de cada uma das variáveis da base, divididas entre spam e nonspam:
+
+```{r bibliotcas, echo=FALSE}
+library(ggplot2)
+library(tidyr)
+library(magrittr)
+library(dplyr)
+
+histograma <- spam%>% 
+  gather(key = Keyword, value = value, make, address,  all, num3d,  our, over, remove, internet, order, mail,  receive, will,
+         people, report, addresses, free, business, email,  you, credit, your, font, num000, money, hp, hpl, george, num650, 
+         lab, labs, telnet, num857, data, num415, num85, technology, num1999, parts, pm, direct, cs, meeting, original, project,
+         re,  edu, table, conference, charSemicolon, charRoundbracket, charSquarebracket, charExclamation, charDollar, charHash,
+         capitalAve, capitalLong, capitalTotal) %>%
+  group_by (type, Keyword) %>%
+  summarise(avg = mean(value), dp = sd(value), min = min(value), max = max(value)) %>%
+  filter(avg <2)
+  
+histograma %>%
+  ggplot(aes(avg, fill = type))+
+  geom_histogram() +
+  labs(title ="Histograma - média de frequência de variáveis", x = "Média de frequência", y = "quantidade de palavras chave")
+```
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
